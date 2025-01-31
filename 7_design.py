@@ -4,7 +4,6 @@ import streamlit as st
 import pandas as pd
 from geopy.geocoders import Nominatim
 from streamlit_option_menu import option_menu
-from chatbot import ChatBot
 import pydeck as pdk
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -193,7 +192,7 @@ if patrol_locations:
             순찰 시 유의사항을 5개까지만 추천해주고 눈에 들어오기 쉽게 짧게 작성해야합니다.
             """
             response = get_ai_response(prompt)
-            # st.info(response)
+            st.info(response)
             
             st.markdown(
                 """

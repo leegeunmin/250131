@@ -1,8 +1,7 @@
 streamlit
+openai
 pandas
+python-dotenv
 geopy
 streamlit-option-menu
 pydeck
-python-dotenv
-flask
-waitress

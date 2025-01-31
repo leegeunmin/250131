@@ -1,0 +1,8 @@
+streamlit
+pandas
+geopy
+streamlit-option-menu
+pydeck
+python-dotenv
+flask
+waitress

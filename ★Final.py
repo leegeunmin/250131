@@ -149,7 +149,7 @@ if patrol_locations:
     
     team_option = ["-소속 자율방범대를 선택하세요-"] + list(patrol_locations.keys())
     ###여기 수정했음
-    selected_team = st.selectbox(options=team_option, index=0)
+    selected_team = st.selectbox(options=team_option)
     
     if selected_team != "-소속 자율방범대를 선택하세요-":
         locations = list(patrol_locations[selected_team].keys())

@@ -138,11 +138,10 @@ st.markdown(
     """, unsafe_allow_html=True)
 st.markdown("---")
 
-# 빈 selectbox 추가 (첫 번째 selectbox 키보드 문제 해결)
-st.selectbox("", options=["-"], index=0, key="dummy_selectbox")
+# 첫 번째 선택 박스 (더미 옵션 추가)
+dummy_select = st.selectbox("순찰 추천을 시작하려면 선택하세요", options=["-", "시작하기"], index=0)
 
-# 순찰 장소 추천 인터페이스
-if patrol_locations:
+if dummy_select == "시작하기":
     st.markdown(
         """
         <div style="text-align: center; font-size: 24px; margin-top: 5px;">

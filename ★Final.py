@@ -149,8 +149,8 @@ if dummy_select == "시작하기":
         </div>
         """, unsafe_allow_html=True)
     
-    team_option = ["-소속 자율방범대를 선택하세요-"] + list(patrol_locations.keys())
-    selected_team = st.selectbox("-", options=patrol_locations.keys(), index=0)
+    team_option = ["-"] + list(patrol_locations.keys())
+    selected_team = st.selectbox("-", options=team_option, index=0)
     
     if selected_team != "-소속 자율방범대를 선택하세요-":
         locations = list(patrol_locations[selected_team].keys())

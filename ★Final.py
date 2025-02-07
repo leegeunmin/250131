@@ -138,141 +138,137 @@ st.markdown(
     """, unsafe_allow_html=True)
 st.markdown("---")
 
-# 첫 번째 선택 박스 (더미 옵션 추가)
-dummy_select = st.selectbox("순찰 추천을 시작하려면 선택하세요", options=["-", "시작하기"], index=0)
+st.markdown(
+    """
+    <div style="text-align: center; font-size: 24px; margin-top: 5px;">
+        <b>✅ 소속 자율방범대를 선택하세요</b>
+    </div>
+    """, unsafe_allow_html=True)
+    
+team_option = sorted(set(["화정동 자율방범대", "행신2동 어머니방범대", "성사1동 자율방범대", "성사2동 자율방범대", "주교동 자율방범대", "주교제일 자율방범대", "주교동 어머니방범대", "성사1동 어머니방범대", "능곡동 자율방범대", "행주동 어머니방범대", "창릉동 자율방범대", "흥도도래울 자율방범대", "고양높빛 자율방범대", "고양동 어머니방범대", "관산동 자율방범대", "관산동 어머니방범대", "덕은한강 자율방범대", "행신3동 자율방범대", "행신4동 자율방범대"]))
+selected_team = st.selectbox("-", options=team_option, index=0)
+    
+if selected_team != "-소속 자율방범대를 선택하세요-":
+    locations = list(patrol_locations[selected_team].keys())
+else:
+    locations = []
+    
+if selected_team != "-소속 자율방범대를 선택하세요-":
+    selected_location = st.selectbox("순찰 필요지역을 선택해주세요", options=locations)
 
-if dummy_select == "시작하기":
-    st.markdown(
-        """
-        <div style="text-align: center; font-size: 24px; margin-top: 5px;">
-            <b>✅ 소속 자율방범대를 선택하세요</b>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    team_option = ["-"] + list(patrol_locations.keys())
-    selected_team = st.selectbox("-", options=team_option, index=0)
-    
-    if selected_team != "-소속 자율방범대를 선택하세요-":
-        locations = list(patrol_locations[selected_team].keys())
-    else:
-        locations = []
+    if selected_location:
+        info = patrol_locations[selected_team][selected_location]
+        st.markdown(f"<h3>🗺️순찰 필요 지역</h3>", unsafe_allow_html=True)
         
-    if selected_team != "-소속 자율방범대를 선택하세요-":
-        selected_location = st.selectbox("순찰 필요지역을 선택해주세요", options=locations)
-
-        if selected_location:
-            info = patrol_locations[selected_team][selected_location]
-            st.markdown(f"<h3>🗺️순찰 필요 지역</h3>", unsafe_allow_html=True)
-            
-            # 주소 지오코딩 (캐시 사용, timeout 10초)
-            coords = geocode_address(info['address'])
-            if coords:
-                # 지도 타일은 기본 밝은 OpenStreetMap 사용
-                tile_provider = "OpenStreetMap"
-                m = folium.Map(
-                    location=[coords['lat'], coords['lon']], 
-                    zoom_start=16, 
-                    tiles=tile_provider
-                )
-                # 중심 마커 없이 300m 원만 추가 (원의 중심이 geocode 결과 좌표와 일치)
-                folium.Circle(
-                    location=[coords['lat'], coords['lon']],
-                    radius=300,
-                    color='red',
-                    weight=2,
-                    fill=True,
-                    fill_opacity=0.2
-                ).add_to(m)
-                # 맵을 감싸는 DIV를 만들어 마진/패딩 최소화
-                st.markdown("<div id='map_container'>", unsafe_allow_html=True)
-                st_folium(m, width=700, height=400)
-                st.markdown("</div>", unsafe_allow_html=True)
-            else:
-                st.warning("주소 지오코딩 실패로 지도 표시 불가.")
-            
-            # 아래로 공백 없이 곧바로 이어짐
-            st.markdown(f"""
-                <div style="text-align: left; font-size: 30px; color: {text_color}; margin-top: 10px;">
-                    <b>📌 장소명</b>
-                </div>
+        # 주소 지오코딩 (캐시 사용, timeout 10초)
+        coords = geocode_address(info['address'])
+        if coords:
+            # 지도 타일은 기본 밝은 OpenStreetMap 사용
+            tile_provider = "OpenStreetMap"
+            m = folium.Map(
+                location=[coords['lat'], coords['lon']], 
+                zoom_start=16, 
+                tiles=tile_provider
+            )
+            # 중심 마커 없이 300m 원만 추가 (원의 중심이 geocode 결과 좌표와 일치)
+            folium.Circle(
+                location=[coords['lat'], coords['lon']],
+                radius=300,
+                color='red',
+                weight=2,
+                fill=True,
+                fill_opacity=0.2
+            ).add_to(m)
+            # 맵을 감싸는 DIV를 만들어 마진/패딩 최소화
+            st.markdown("<div id='map_container'>", unsafe_allow_html=True)
+            st_folium(m, width=700, height=400)
+            st.markdown("</div>", unsafe_allow_html=True)
+        else:
+            st.warning("주소 지오코딩 실패로 지도 표시 불가.")
+        
+        # 아래로 공백 없이 곧바로 이어짐
+        st.markdown(f"""
+            <div style="text-align: left; font-size: 30px; color: {text_color}; margin-top: 10px;">
+                <b>📌 장소명</b>
+            </div>
+        """, unsafe_allow_html=True)
+        st.markdown(f"""
+            <div style="text-align: center; font-size: 26px; color: {text_color}; margin-top: 5px;">
+                <b>{selected_location}</b>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown(
+            f"""
+            <div style="text-align: left; font-size: 30px; color: {text_color}; margin-top: 20px;">
+                <b>🌟 경찰서 범죄 분석 결과</b>
+            </div>
             """, unsafe_allow_html=True)
-            st.markdown(f"""
-                <div style="text-align: center; font-size: 26px; color: {text_color}; margin-top: 5px;">
-                    <b>{selected_location}</b>
-                </div>
+        st.markdown(info['description'])
+        st.markdown(
+            f"""
+            <div style="text-align: left; font-size: 25px; color: {text_color}; margin-top: 20px;">
+                <b>🔍 순찰 시 주요 착안사항(AI) </b>
+            </div>
             """, unsafe_allow_html=True)
-            
-            st.markdown(
-                f"""
-                <div style="text-align: left; font-size: 30px; color: {text_color}; margin-top: 20px;">
-                    <b>🌟 경찰서 범죄 분석 결과</b>
-                </div>
-                """, unsafe_allow_html=True)
-            st.markdown(info['description'])
-            st.markdown(
-                f"""
-                <div style="text-align: left; font-size: 25px; color: {text_color}; margin-top: 20px;">
-                    <b>🔍 순찰 시 주요 착안사항(AI) </b>
-                </div>
-                """, unsafe_allow_html=True)
-            st.info("💡AI 활용으로 답변에 오류가 있을 수 있습니다")
-            prompt = f"""
-            [지시사항]
-            당신은 자율방범대에게 순찰 시 필요한 사항을 안내해주는 안내자입니다.
-            {selected_location}에서 자율방범대원이 순찰할 때 필요한 사항을 상세히 설명해주세요.
-            지역적 특성 {info['description']}에 입력된 내용을 바탕으로 필요사항을 설명해주세요.
-            순찰 시 범죄취약지역, 방범시설 부족지역을 발견하면 경찰서 CPO에게 통보하고, 긴급한 상황이 발생하면 112에 신고해야 합니다.
-            경찰서 CPO에게는 신고하는 것이 아니라 범죄취약요인을 발견하게 되면 CPO에게 "통보"하는 것입니다.
-            [제한사항]
-            순찰노선을 정해주지 않고 자율적으로 순찰하도록 하는 것이 중요합니다. 
-            순찰 시 유의사항을 5개까지만 추천해주고 눈에 들어오기 쉽게 짧게 작성해야합니다.
-            """
-            response = get_ai_response(prompt)
-            st.info(response)
+        st.info("💡AI 활용으로 답변에 오류가 있을 수 있습니다")
+        prompt = f"""
+        [지시사항]
+        당신은 자율방범대에게 순찰 시 필요한 사항을 안내해주는 안내자입니다.
+        {selected_location}에서 자율방범대원이 순찰할 때 필요한 사항을 상세히 설명해주세요.
+        지역적 특성 {info['description']}에 입력된 내용을 바탕으로 필요사항을 설명해주세요.
+        순찰 시 범죄취약지역, 방범시설 부족지역을 발견하면 경찰서 CPO에게 통보하고, 긴급한 상황이 발생하면 112에 신고해야 합니다.
+        경찰서 CPO에게는 신고하는 것이 아니라 범죄취약요인을 발견하게 되면 CPO에게 "통보"하는 것입니다.
+        [제한사항]
+        순찰노선을 정해주지 않고 자율적으로 순찰하도록 하는 것이 중요합니다. 
+        순찰 시 유의사항을 5개까지만 추천해주고 눈에 들어오기 쉽게 짧게 작성해야합니다.
+        """
+        response = get_ai_response(prompt)
+        st.info(response)
 
-            st.markdown(
-                f"""
-                <div style="text-align: left; font-size: 30px; color: {text_color}; margin-top: 20px;">
-                    <b>🏚️ 취약지역 통보 </b>
-                </div>
-                """, unsafe_allow_html=True)
+        st.markdown(
+            f"""
+            <div style="text-align: left; font-size: 30px; color: {text_color}; margin-top: 20px;">
+                <b>🏚️ 취약지역 통보 </b>
+            </div>
+            """, unsafe_allow_html=True)
+        st.markdown(
+            f"""
+            <div style="text-align: center; font-size: 16px; color: {text_color}; margin-top: 20px;">
+                <b>아래의 링크를 통해 경찰서 범죄예방진단팀에게<br>
+                취약지역을 통보해주세요.<br>
+                <a href="https://open.kakao.com/o/scgaTwdh" target="_blank" style="color: blue; font-weight: bold;">🔗 고양경찰서 범죄예방진단팀</a>
+                </b>
+            </div>
+            """, unsafe_allow_html=True)
+        st.markdown(
+            f"""
+            <div style="text-align: left; font-size: 30px; color: {text_color}; margin-top: 20px;">
+                <b>📑 기타 참고사항 </b>
+            </div>
+            """, unsafe_allow_html=True)
+        if "해당관서" in info:
             st.markdown(
                 f"""
                 <div style="text-align: center; font-size: 16px; color: {text_color}; margin-top: 20px;">
-                    <b>아래의 링크를 통해 경찰서 범죄예방진단팀에게<br>
-                    취약지역을 통보해주세요.<br>
-                    <a href="https://open.kakao.com/o/scgaTwdh" target="_blank" style="color: blue; font-weight: bold;">🔗 고양경찰서 범죄예방진단팀</a>
-                    </b>
+                    <b>순찰활동 시 {selected_team}의<br>
+                    해당 지역관서는 {info['해당관서']}입니다.</b>
                 </div>
                 """, unsafe_allow_html=True)
-            st.markdown(
-                f"""
-                <div style="text-align: left; font-size: 30px; color: {text_color}; margin-top: 20px;">
-                    <b>📑 기타 참고사항 </b>
-                </div>
-                """, unsafe_allow_html=True)
-            if "해당관서" in info:
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; font-size: 16px; color: {text_color}; margin-top: 20px;">
-                        <b>순찰활동 시 {selected_team}의<br>
-                        해당 지역관서는 {info['해당관서']}입니다.</b>
-                    </div>
-                    """, unsafe_allow_html=True)
-            st.markdown(
-                f"""
-                <div style="text-align: left; font-size: 30px; color: {text_color}; margin-top: 20px;">
-                    <b>❓문의사항 </b>
-                </div>
-                """, unsafe_allow_html=True)
-            st.markdown(
-                f"""
-                <div style="text-align: center; font-size: 16px; color: {text_color}; margin-top: 20px;">
-                    <b>순찰활동 중 취약사항 발견 시<br>
-                    고양경찰서 범죄예방대응과 담당자(031-930-5343)<br>
-                    연락바랍니다.</b>
-                </div>
-                """, unsafe_allow_html=True)
+        st.markdown(
+            f"""
+            <div style="text-align: left; font-size: 30px; color: {text_color}; margin-top: 20px;">
+                <b>❓문의사항 </b>
+            </div>
+            """, unsafe_allow_html=True)
+        st.markdown(
+            f"""
+            <div style="text-align: center; font-size: 16px; color: {text_color}; margin-top: 20px;">
+                <b>순찰활동 중 취약사항 발견 시<br>
+                고양경찰서 범죄예방대응과 담당자(031-930-5343)<br>
+                연락바랍니다.</b>
+            </div>
+            """, unsafe_allow_html=True)
 
 st.markdown("---")
 st.markdown(

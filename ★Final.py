@@ -138,16 +138,19 @@ st.markdown(
     """, unsafe_allow_html=True)
 st.markdown("---")
 
+# 빈 selectbox 추가 (첫 번째 selectbox 키보드 문제 해결)
+st.selectbox("", options=["-"], index=0, key="dummy_selectbox")
+
 # 순찰 장소 추천 인터페이스
 if patrol_locations:
     st.markdown(
-        f"""
-        <div style="text-align: center; font-size: 24px; color: {text_color}; margin-top: 5px;">
+        """
+        <div style="text-align: center; font-size: 24px; margin-top: 5px;">
             <b>✅ 소속 자율방범대를 선택하세요</b>
         </div>
         """, unsafe_allow_html=True)
     
-    team_option = list(patrol_locations.keys())
+    team_option = ["-소속 자율방범대를 선택하세요-"] + list(patrol_locations.keys())
     selected_team = st.selectbox("-", options=team_option, index=0)
     
     if selected_team != "-소속 자율방범대를 선택하세요-":
@@ -160,7 +163,7 @@ if patrol_locations:
 
         if selected_location:
             info = patrol_locations[selected_team][selected_location]
-            st.markdown(f"<h3 style='color: {text_color};'>🗺️순찰 필요 지역</h3>", unsafe_allow_html=True)
+            st.markdown(f"<h3>🗺️순찰 필요 지역</h3>", unsafe_allow_html=True)
             
             # 주소 지오코딩 (캐시 사용, timeout 10초)
             coords = geocode_address(info['address'])
